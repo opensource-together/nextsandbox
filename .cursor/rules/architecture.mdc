@@ -1,0 +1,28 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+nsb/                # Racine du monorepo
+├── cli/                   # Outils en ligne de commande
+│   └── scanComponents.ts  # Script pour scanner et intégrer les composants dans la sandbox
+├── demo/                  # Application Next.js de démonstration pour tester et visualiser votre package
+│   ├── package.json       # Dépendances spécifiques à l'app demo (Next.js, React, etc.)
+│   ├── next.config.ts     # Configuration Next.js (avec option externalDir pour importer le package externe)
+│   ├── tsconfig.json      # Configuration TypeScript pour demo
+│   ├── pages/             # Routes de l'application demo
+│   │   └── sandbox.tsx    # Fichier réexportant le composant sandbox depuis le package
+│   ├── public/            # Assets statiques (images, polices, etc.)
+│   └── src/               # Éventuellement, code source spécifique à demo (composants, styles, etc.)
+├── packages/              # Workspaces : Contient vos packages locaux
+│   └── nextsandbox/       # Package principal pour NextSandbox
+│        ├── package.json  # Déclaration du package (peerDependencies sur React, etc.)
+│        ├── components/   # Composants UI (cartes, listes, éditeurs de props, etc.)
+│        ├── hooks/        # Custom hooks (ex : useSandboxScanner)
+│        ├── pages/        # Pages dédiées pour la sandbox
+│        │   └── sandbox/
+│        │         └── page.tsx  # Composant de la page principale sandbox
+│        ├── utils/        # Fonctions utilitaires (ex : parsers, gestion des états)
+│        └── types/        # Déclarations TypeScript pour assurer une meilleure maintenabilité
+├── package.json           # Fichier de configuration global du monorepo (définition des workspaces, scripts communs, etc.)
+└── README.md              # Documentation générale du projet et instructions d'utilisation
