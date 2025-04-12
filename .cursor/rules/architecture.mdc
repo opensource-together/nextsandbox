@@ -1,28 +1,136 @@
 ---
 description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
-nsb/                # Racine du monorepo
-├── cli/                   # Outils en ligne de commande
-│   └── scanComponents.ts  # Script pour scanner et intégrer les composants dans la sandbox
-├── demo/                  # Application Next.js de démonstration pour tester et visualiser votre package
-│   ├── package.json       # Dépendances spécifiques à l'app demo (Next.js, React, etc.)
-│   ├── next.config.ts     # Configuration Next.js (avec option externalDir pour importer le package externe)
-│   ├── tsconfig.json      # Configuration TypeScript pour demo
-│   ├── pages/             # Routes de l'application demo
-│   │   └── sandbox.tsx    # Fichier réexportant le composant sandbox depuis le package
-│   ├── public/            # Assets statiques (images, polices, etc.)
-│   └── src/               # Éventuellement, code source spécifique à demo (composants, styles, etc.)
-├── packages/              # Workspaces : Contient vos packages locaux
-│   └── nextsandbox/       # Package principal pour NextSandbox
-│        ├── package.json  # Déclaration du package (peerDependencies sur React, etc.)
-│        ├── components/   # Composants UI (cartes, listes, éditeurs de props, etc.)
-│        ├── hooks/        # Custom hooks (ex : useSandboxScanner)
-│        ├── pages/        # Pages dédiées pour la sandbox
-│        │   └── sandbox/
-│        │         └── page.tsx  # Composant de la page principale sandbox
-│        ├── utils/        # Fonctions utilitaires (ex : parsers, gestion des états)
-│        └── types/        # Déclarations TypeScript pour assurer une meilleure maintenabilité
-├── package.json           # Fichier de configuration global du monorepo (définition des workspaces, scripts communs, etc.)
-└── README.md              # Documentation générale du projet et instructions d'utilisation
+next-sandbox/
+├── src/                    # Code source principal
+│   ├── cli.ts             # Interface CLI pour initialiser la sandbox
+│   ├── config.ts          # Gestion du fichier de configuration
+│   ├── scanner.ts         # Scan des composants dans les dossiers configurés
+│   ├── generator.ts       # Génération de la page /sandbox
+│   ├── ui/                # Composants UI pour l'interface sandbox
+│   │   ├── ComponentCard.tsx  # Carte pour afficher un composant
+│   │   ├── SearchBar.tsx      # Barre de recherche
+│   │   ├── PropsEditor.tsx    # Éditeur de props interactif
+│   │   ├── ResponsivePreview.tsx  # Prévisualisation responsive
+│   │   └── DocumentationPanel.tsx  # Panneau de documentation
+│   ├── utils.ts           # Fonctions utilitaires
+│   └── types.ts           # Définitions de types TypeScript
+├── templates/             # Templates utilisés pour la génération
+│   └── sandbox-page.tsx   # Template de la page /sandbox
+├── tests/                 # Tests unitaires et d'intégration
+│   ├── cli.test.ts
+│   ├── config.test.ts
+│   ├── scanner.test.ts
+│   ├── generator.test.ts
+│   └── utils.test.ts
+├── package.json           # Configuration npm
+├── tsconfig.json          # Configuration TypeScript
+└── README.md              # Documentation du projet
+
+## Structure Globale
+
+Le projet suit une architecture modulaire avec des dossiers dédiés à des fonctionnalités spécifiques :
+
+- **`src/`** : Contient le code source principal du package.
+- **`templates/`** : Stocke les templates pour générer les pages dans un projet Next.js.
+- **`tests/`** : Regroupe les tests unitaires et d'intégration.
+- **`package.json`** : Configuration npm avec les dépendances et scripts.
+- **`tsconfig.json`** : Configuration pour TypeScript.
+- **`README.md`** : Documentation principale du projet.
+
+---
+
+## Détail des Dossiers et Fichiers
+
+### 1. Dossier `src/`
+
+Le dossier `src/` regroupe le code source principal, organisé en modules pour une meilleure lisibilité.
+
+- **`cli.ts`**  
+  - **But** : Interface en ligne de commande (CLI) pour initialiser et configurer la sandbox dans un projet Next.js.  
+  - **Exemple** : Permet d'exécuter `npx next-sandbox init` pour créer la page `/sandbox`.
+
+- **`config.ts`**  
+  - **But** : Lit et valide le fichier de configuration utilisateur (`sandbox.config.js`).  
+  - **Exemple** : Gère les dossiers à scanner et les exclusions définies.
+
+- **`scanner.ts`**  
+  - **But** : Analyse les dossiers pour détecter les composants à inclure dans la sandbox.  
+  - **Exemple** : Utilise des patterns glob pour lister les fichiers de composants.
+
+- **`generator.ts`**  
+  - **But** : Génère la page `/sandbox` dans le dossier `app/` du projet Next.js à partir des composants détectés.  
+  - **Exemple** : Crée `app/sandbox/page.tsx` avec des imports dynamiques.
+
+- **`ui/`**  
+  - **But** : Contient les composants React pour l'interface de la page `/sandbox`.  
+  - **Sous-composants** :  
+    - **`ComponentCard.tsx`** : Affiche un composant avec ses états (normal, hover, etc.).  
+    - **`SearchBar.tsx`** : Filtre les composants par nom ou catégorie.  
+    - **`PropsEditor.tsx`** : Permet de modifier les props en temps réel.  
+    - **`ResponsivePreview.tsx`** : Prévisualise le composant sur différents écrans.  
+    - **`DocumentationPanel.tsx`** : Affiche la documentation des composants.
+
+- **`utils.ts`**  
+  - **But** : Fournit des fonctions utilitaires réutilisables.  
+  - **Exemple** : Normalise les chemins ou extrait les noms des composants.
+
+- **`types.ts`**  
+  - **But** : Définit les types TypeScript pour garantir la cohérence.  
+  - **Exemple** : Types pour la configuration et les métadonnées.
+
+---
+
+### 2. Dossier `templates/`
+
+Ce dossier contient les modèles utilisés pour générer des fichiers dans le projet Next.js.
+
+- **`sandbox-page.tsx`**  
+  - **But** : Template de la page `/sandbox` générée dans le projet.  
+  - **Exemple** : Structure de base avec imports dynamiques des composants.
+
+---
+
+### 3. Dossier `tests/`
+
+Regroupe les tests pour valider les fonctionnalités du projet.
+
+- **`cli.test.ts`**  
+  - **But** : Tests unitaires pour la CLI.  
+  - **Exemple** : Vérifie la génération correcte de la page `/sandbox`.
+
+- **`config.test.ts`**  
+  - **But** : Tests pour la gestion de la configuration.  
+  - **Exemple** : Valide le fichier `sandbox.config.js`.
+
+- **`scanner.test.ts`**  
+  - **But** : Tests pour le scanner de composants.  
+  - **Exemple** : Confirme la détection des composants.
+
+- **`generator.test.ts`**  
+  - **But** : Tests pour la génération de la page `/sandbox`.  
+  - **Exemple** : Vérifie les imports dans le fichier généré.
+
+- **`utils.test.ts`**  
+  - **But** : Tests pour les fonctions utilitaires.  
+  - **Exemple** : Valide la normalisation des chemins.
+
+---
+
+### 4. Fichiers Racine
+
+Ces fichiers, situés à la racine, sont essentiels au projet.
+
+- **`package.json`**  
+  - **But** : Configuration npm avec dépendances, scripts et métadonnées.  
+  - **Exemple** : Inclut des scripts pour build et test.
+
+- **`tsconfig.json`**  
+  - **But** : Configuration TypeScript pour la compilation.  
+  - **Exemple** : Définit le typage strict et les exclusions.
+
+- **`README.md`**  
+  - **But** : Documentation principale pour installer et utiliser **NextSandbox**.  
+  - **Exemple** : Instructions et exemples d’utilisation.

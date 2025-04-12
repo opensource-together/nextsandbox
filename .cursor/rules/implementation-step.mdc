@@ -1,0 +1,151 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Implementation Steps for NextSandbox
+
+Ce document est un guide étape par étape pour implémenter le projet **NextSandbox**. Il est conçu pour être exhaustif et clair, en détaillant chaque phase du développement avec les actions à entreprendre et les fichiers associés.
+
+## 1. Initialisation du Projet
+
+- **Objectif** : Mettre en place la structure initiale du projet.
+- **Actions** :
+  - Initialiser un projet Node.js avec la commande `npm init`.
+  - Installer TypeScript et configurer le fichier `tsconfig.json` avec les options nécessaires.
+  - Créer les dossiers de base : `src/` pour le code source, `templates/` pour les modèles, et `tests/` pour les tests.
+- **Fichiers associés** :
+  - `package.json`
+  - `tsconfig.json`
+
+---
+
+## 2. Configuration du Package
+
+- **Objectif** : Préparer les dépendances et les scripts nécessaires au projet.
+- **Actions** :
+  - Installer les dépendances principales comme `fs-extra`, `glob`, `commander` (pour la CLI), et autres outils utiles.
+  - Ajouter des scripts npm dans `package.json` pour compiler (`tsc`), tester (`jest`), et vérifier le code (lint).
+- **Fichiers associés** :
+  - `package.json`
+
+---
+
+## 3. Développement des Modules Clés
+
+### 3.1 CLI (`cli.ts`)
+
+- **Objectif** : Créer une interface en ligne de commande pour lancer la sandbox.
+- **Actions** :
+  - Utiliser la bibliothèque `commander` pour définir une commande `init`.
+  - Configurer la CLI pour lire la configuration et déclencher le scanning et la génération.
+- **Fichiers associés** :
+  - `src/cli.ts`
+
+---
+
+### 3.2 Gestion de la Configuration (`config.ts`)
+
+- **Objectif** : Gérer la configuration fournie par l'utilisateur.
+- **Actions** :
+  - Charger un fichier de configuration comme `sandbox.config.js` ou définir des valeurs par défaut si absent.
+  - Valider les patterns glob et les exclusions spécifiés dans la configuration.
+- **Fichiers associés** :
+  - `src/config.ts`
+  - `sandbox.config.js` (exemple)
+
+---
+
+### 3.3 Scanning des Composants (`scanner.ts`)
+
+- **Objectif** : Identifier les composants dans les dossiers spécifiés.
+- **Actions** :
+  - Utiliser `glob` pour parcourir les fichiers selon les patterns configurés.
+  - Extraire des métadonnées comme le nom, le chemin et la catégorie des composants.
+- **Fichiers associés** :
+  - `src/scanner.ts`
+
+---
+
+### 3.4 Génération de la Page Sandbox (`generator.ts`)
+
+- **Objectif** : Produire la page sandbox pour le projet Next.js.
+- **Actions** :
+  - Générer le fichier `app/sandbox/page.tsx` à partir d’un template.
+  - Ajouter dynamiquement les imports des composants détectés par le scanner.
+- **Fichiers associés** :
+  - `src/generator.ts`
+  - `templates/sandbox-page.tsx`
+
+---
+
+### 3.5 Composants UI (`ui/`)
+
+- **Objectif** : Construire l’interface utilisateur de la sandbox.
+- **Actions** :
+  - Développer des composants React pour afficher les composants scannés et interagir avec eux.
+  - Ajouter des fonctionnalités comme la recherche, l’édition des props, la prévisualisation responsive, et un panneau de documentation.
+- **Fichiers associés** :
+  - `src/ui/ComponentCard.tsx`
+  - `src/ui/SearchBar.tsx`
+  - `src/ui/PropsEditor.tsx`
+  - `src/ui/ResponsivePreview.tsx`
+  - `src/ui/DocumentationPanel.tsx`
+
+---
+
+### 3.6 Utilitaires (`utils.ts`)
+
+- **Objectif** : Fournir des fonctions utilitaires réutilisables.
+- **Actions** :
+  - Implémenter des helpers comme `normalizePath` pour standardiser les chemins ou `extractComponentName` pour extraire les noms des composants.
+- **Fichiers associés** :
+  - `src/utils.ts`
+
+---
+
+### 3.7 Types (`types.ts`)
+
+- **Objectif** : Définir les types pour assurer la cohérence du projet.
+- **Actions** :
+  - Créer des interfaces TypeScript pour la configuration, les métadonnées des composants, etc.
+- **Fichiers associés** :
+  - `src/types.ts`
+
+---
+
+## 4. Création des Templates
+
+- **Objectif** : Préparer les modèles nécessaires à la génération de fichiers.
+- **Actions** :
+  - Écrire un template pour `sandbox-page.tsx` avec des placeholders pour les imports dynamiques des composants.
+- **Fichiers associés** :
+  - `templates/sandbox-page.tsx`
+
+---
+
+## 5. Tests
+
+- **Objectif** : Garantir la fiabilité des modules développés.
+- **Actions** :
+  - Écrire des tests unitaires pour chaque module clé (CLI, config, scanner, etc.).
+  - Configurer Jest avec `ts-jest` pour exécuter les tests en TypeScript.
+- **Fichiers associés** :
+  - `tests/cli.test.ts`
+  - `tests/config.test.ts`
+  - `tests/scanner.test.ts`
+  - `tests/generator.test.ts`
+  - `tests/utils.test.ts`
+
+---
+
+## 6. Finalisation et Publication
+
+- **Objectif** : Finaliser le projet et le rendre prêt pour une utilisation publique.
+- **Actions** :
+  - Compiler le projet avec `tsc` pour générer les fichiers JavaScript.
+  - Rédiger une documentation claire dans `README.md`.
+  - Publier le package sur npm avec `npm publish`.
+- **Fichiers associés** :
+  - `README.md`
+  - `package.json`

@@ -3,6 +3,10 @@ description:
 globs: 
 alwaysApply: true
 ---
+Voici une version mise à jour de votre brief, incluant l'idée d'un fichier de configuration pour désigner les dossiers à scanner automatiquement :
+
+---
+
 # **NextSandbox**
 
 *Une alternative légère et intégrée à Storybook, spécialement optimisée pour Next.js, permettant de visualiser, tester et documenter facilement vos composants UI.*
@@ -14,29 +18,31 @@ alwaysApply: true
 ### **Fonctionnalités Globales**
 
 - **Intégration native avec Next.js**
-    - Installation via npm qui génère automatiquement une page `/sandbox` respectant la structure du projet Next.js.
+  - Installation via npm qui génère automatiquement une page `/sandbox` respectant la structure du projet Next.js.
 - **Interface de visualisation épurée**
-    - Présentation des composants sous forme de cartes, avec une interface moderne et responsive.
+  - Présentation des composants sous forme de cartes, avec une interface moderne et responsive.
 - **Barre de recherche et filtrage**
-    - Permet de rechercher et filtrer les composants par nom, catégorie ou tags pour une navigation rapide.
+  - Permet de rechercher et filtrer les composants par nom, catégorie ou tags pour une navigation rapide.
 - **Workflow simplifié d’ajout de composants**
-    - Une commande CLI ou un script qui scanne le dossier des composants et les intègre automatiquement dans la sandbox. → si un sous dossier dans ‘shared’ est crée, on considère une nouvelle catégorie
+  - Une commande CLI ou un script qui scanne le dossier des composants et les intègre automatiquement dans la sandbox.
+    - Si un sous-dossier dans `shared` est créé, on considère une nouvelle catégorie.
+    - Intégration d’un fichier de configuration dédié permettant de définir explicitement les dossiers à scanner, avec la possibilité d’y inclure des expressions régulières pour spécifier précisément quels fichiers ou dossiers inclure ou exclure.
 
 ---
 
 ### **Fonctionnalités au niveau du composant**
 
 - **Visualisation multi-états**
-    - Affichage du composant dans différents états (normal, hover, actif, désactivé, etc.) et configurations (tailles, thèmes, etc.).
+  - Affichage du composant dans différents états (normal, hover, actif, désactivé, etc.) et configurations (tailles, thèmes, etc.).
 - **Éditeur de props interactif**
-    - Un panneau qui permet de modifier en temps réel les propriétés du composant pour voir instantanément l’impact des changements.
+  - Un panneau qui permet de modifier en temps réel les propriétés du composant pour voir instantanément l’impact des changements.
 - **Prévisualisation responsive**
-    - Tests du composant sur divers formats d'écran (mobile, tablette, desktop) pour garantir une intégration harmonieuse.
+  - Tests du composant sur divers formats d'écran (mobile, tablette, desktop) pour garantir une intégration harmonieuse.
 - **Documentation intégrée**
-    - Possibilité d’ajouter et d’afficher une documentation directement associée à chaque composant, incluant des explications et des exemples d’utilisation.
+  - Possibilité d’ajouter et d’afficher une documentation directement associée à chaque composant, incluant des explications et des exemples d’utilisation.
 - **Simulation d’interactions et d’événements**
-    - Outils pour simuler des clics, survols, ou autres événements interactifs afin de tester le comportement dynamique du composant.
+  - Outils pour simuler des clics, survols, ou autres événements interactifs afin de tester le comportement dynamique du composant.
 
 ---
 
-**NextSandbox** se positionne comme une alternative à Storybook, optimisée pour Next.js, en offrant un environnement intégré, léger et efficace pour le développement, la visualisation et la documentation de composants UI.
+**NextSandbox** se positionne ainsi comme une alternative à Storybook, optimisée pour Next.js, en offrant un environnement intégré, léger et efficace pour le développement, la visualisation et la documentation de composants UI, tout en mettant l'accent sur la flexibilité grâce à une configuration dédiée pour la détection automatisée des composants.
