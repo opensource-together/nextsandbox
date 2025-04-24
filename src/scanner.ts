@@ -1,42 +1,92 @@
-import glob from "glob";
+import fs from "fs-extra";
+import * as glob from "glob";
 import path from "path";
-import { loadConfig, SandboxConfig } from "./config";
+import { v4 as uuidv4 } from "uuid";
+import { SandboxConfig, ComponentMeta } from "./types";
+import {
+  normalizePath,
+  extractComponentName,
+  extractCategory,
+  generateComponentId,
+} from "./utils";
 
-// Interface pour les métadonnées d'un composant
-export interface ComponentMeta {
-  name: string;
-  filePath: string;
-  category: string;
-}
-
-// Fonction pour scanner les composants
-export function scanComponents(): ComponentMeta[] {
-  const config: SandboxConfig = loadConfig();
+/**
+ * Scanne les composants selon la configuration
+ *
+ * @param config Configuration de la sandbox
+ * @returns Liste des métadonnées des composants trouvés
+ */
+export const scanComponents = async (
+  config: SandboxConfig
+): Promise<ComponentMeta[]> => {
   const components: ComponentMeta[] = [];
+  const workingDir = process.cwd();
 
-  // Pour chaque dossier à scanner, on recherche récursivement les fichiers .tsx et .jsx
-  for (const dir of config.scanDirs) {
-    // Construire le pattern glob (par exemple, src/ui/**/*.tsx)
-    const pattern = path.join(dir, "**", "*.{tsx,jsx}");
+  // Récupérer les répertoires à scanner
+  const componentDirs = config.componentDirs || [];
+  const excludePatterns = config.exclude || [];
 
-    // Construire les patterns d'exclusion à partir de config.exclude
-    const ignorePatterns = (config.exclude || []).map((ex) => `**/${ex}/**`);
+  // Scanner chaque dossier de composants
+  for (const pattern of componentDirs) {
+    try {
+      // Utiliser glob pour trouver les fichiers selon le pattern
+      const files = glob.sync(pattern, {
+        cwd: workingDir,
+        ignore: excludePatterns,
+        absolute: false,
+      });
 
-    // Récupérer la liste des fichiers correspondants
-    const matches = glob.sync(pattern, { ignore: ignorePatterns });
+      // Parcourir les fichiers trouvés
+      for (const file of files) {
+        try {
+          const filePath = path.join(workingDir, file);
 
-    for (const filePath of matches) {
-      // Extraire le nom du composant depuis le nom de fichier (sans extension)
-      const name = path.basename(filePath, path.extname(filePath));
+          // Vérifier si c'est un fichier avant de lire
+          if (!fs.statSync(filePath).isFile()) {
+            continue; // Passer au suivant si c'est un répertoire
+          }
 
-      // Déduire une catégorie basée sur le dossier parent (si possible)
-      const segments = filePath.split(path.sep);
-      const category =
-        segments.length >= 2 ? segments[segments.length - 2] : "default";
+          const normalizedPath = normalizePath(file);
+          const name = extractComponentName(normalizedPath);
+          const category = extractCategory(normalizedPath, config.categories);
+          const id = generateComponentId(name, normalizedPath);
 
-      components.push({ name, filePath, category });
+          // Lire le contenu du fichier pour extraire des informations supplémentaires
+          const content = fs.readFileSync(filePath, "utf-8");
+
+          // Déterminer le nom d'export (si différent du nom du fichier)
+          // Cette détection est simplifiée, une analyse plus robuste pourrait être implémentée
+          let exportName = name;
+
+          if (content.includes(`export default ${name}`)) {
+            exportName = name;
+          } else if (
+            content.match(/export default function\s+([A-Za-z0-9_]+)/)
+          ) {
+            const match = content.match(
+              /export default function\s+([A-Za-z0-9_]+)/
+            );
+            if (match && match[1]) {
+              exportName = match[1];
+            }
+          }
+
+          // Ajouter le composant à la liste
+          components.push({
+            id,
+            name,
+            path: normalizedPath,
+            category,
+            exportName,
+          });
+        } catch (error) {
+          console.warn(`Erreur lors de l'analyse du fichier ${file}: ${error}`);
+        }
+      }
+    } catch (error) {
+      console.error(`Erreur lors du scanning du pattern ${pattern}: ${error}`);
     }
   }
 
   return components;
-}
+};

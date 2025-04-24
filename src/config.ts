@@ -7,18 +7,11 @@
 
 import fs from "fs-extra";
 import path from "path";
-
-// Définition de l'interface de la configuration.
-export interface SandboxConfig {
-  // Liste des dossiers à scanner pour détecter les composants.
-  scanDirs: string[];
-  // Liste des motifs de fichiers ou dossiers à exclure du scan.
-  exclude?: string[];
-}
+import { SandboxConfig } from "./types";
 
 // Configuration par défaut.
 const defaultConfig: SandboxConfig = {
-  scanDirs: ["src/ui", "src/shared"],
+  componentDirs: ["src/ui/**/*.tsx", "src/shared/**/*.tsx"],
   exclude: ["node_modules", "dist"],
 };
 
@@ -31,6 +24,12 @@ export function loadConfig(): SandboxConfig {
       // Importation dynamique du fichier de configuration.
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const userConfig: Partial<SandboxConfig> = require(configPath);
+
+      // Support des anciennes configurations utilisant scanDirs
+      if (userConfig.scanDirs && !userConfig.componentDirs) {
+        userConfig.componentDirs = userConfig.scanDirs;
+      }
+
       return { ...defaultConfig, ...userConfig };
     } catch (error) {
       console.error("Erreur lors du chargement de sandbox.config.js:", error);
@@ -40,4 +39,20 @@ export function loadConfig(): SandboxConfig {
     // Aucune configuration trouvée, retourner la configuration par défaut.
     return defaultConfig;
   }
+}
+
+// Fonction pour valider la configuration
+export function validateConfig(config: SandboxConfig): boolean {
+  // Vérifier que componentDirs existe et est un tableau non vide
+  if (
+    !config.componentDirs ||
+    !Array.isArray(config.componentDirs) ||
+    config.componentDirs.length === 0
+  ) {
+    throw new Error(
+      "La configuration doit contenir au moins un pattern de recherche de composants dans componentDirs"
+    );
+  }
+
+  return true;
 }
