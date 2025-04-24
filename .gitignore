@@ -1,3 +1,6 @@
 .DS_Store
 /.cursor
 .cursor
+
+node_modules/
+
